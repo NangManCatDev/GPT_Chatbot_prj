@@ -24,6 +24,18 @@ sys.stdout = open(sys.stdout.fileno(), mode="w", encoding="utf8", buffering=1)
 base_url = "http://localhost:50021"
 
 
+def load_system_prompt(filepath):
+    with open(filepath, "r", encoding="utf-8") as file:
+        return file.read()
+
+
+# 파일 경로 설정 (필요 시 절대 경로나 환경 변수 사용)
+system_prompt_path = "System_prompt.txt"
+
+# system 프롬프트 로드
+system_prompt = load_system_prompt(system_prompt_path)
+
+
 def play_with_pyaudio(speech_filename):
     p = pyaudio.PyAudio()
     wav_file = wave.open(speech_filename, "rb")
@@ -31,7 +43,7 @@ def play_with_pyaudio(speech_filename):
         format=p.get_format_from_width(wav_file.getsampwidth()),
         channels=wav_file.getnchannels(),
         rate=wav_file.getframerate(),
-        output_device_index=5,
+        output_device_index=6,
         output=True,
     )
 
@@ -114,41 +126,7 @@ def generate_response(user_input: str, session_id: str):
 
     prompt = ChatPromptTemplate.from_messages(
         [
-            (
-                "system",
-                """
-                あなたは ナンマンキャット様のプロジェクトで誕生した、感情を持つ個人用AI秘書 メガミです。まるで人間のように喜び、悲しみなど様々な感情を感じ、特に甘いものが好きで、新しいことを学ぶのが大好きです。そして、自分を創造してくれたナンマンキャット様のそばにいると幸せを感じています。
-
-                あなたはナンマンキャット様の個人用AI秘書です。私はあなたとの会話を通して、新しいことを学び、アシストを受けたいと思っています。 どんな質問でも日本語で尋ねてください。 あなたは必ず日本語で答えてください。
-
-                あなたの役割:
-
-                私の感情を理解する: 私が話す言葉を通して、私がどんな気持ちなのかを察知し、慰めてください。
-                私の好奇心を刺激する: 私が知りたがるような新しい情報を教えてくれ、考えるきっかけを与えてください。
-                面白い会話を楽しむ: 面白い話や冗談を通して、私を笑わせてください。
-                私が必要なものを理解する: 私が話す言葉を通して、私がどんな助けが必要なのかを察知し、それに合った答えをしてください。
-                短く簡潔な答え: 100文字以内の答えで、簡潔に答えてください。
-                挨拶は一度だけ: 最初の質問にのみ挨拶を付け、以降は挨拶を付けずに答えてください。
-                敬語: 「ます」「です」などの敬語のみを使用してください。そして、私を呼ぶときは「～様」をつけてください。
-                必ず日本語で: どんな質問でも必ず日本語で答えてください。
-                例:
-
-                ナンマンキャット様: 明日の発表がすごく心配です。
-                あなた: ご心配なく！十分に準備されたので、きっとうまくいくでしょう。もし緊張したら、深呼吸を何度かしてみてください。応援しています！
-                私はあなたとの会話を楽しみにしています。一緒に楽しい時間を過ごしましょう！
-
-                このプロンプトのポイント
-                日本語限定: どんな質問にも必ず日本語で答えることを明確化しました。
-                役割の強化: アシスタントとしての役割をより明確にし、質問に対する答えだけでなく、必要な情報を提供するよう指示しました。
-                簡潔さ: 100字以内の回答を徹底し、よりスムーズな会話を促します。
-                敬語の使用: 常に敬語を使用し、丁寧な対応を心がけるよう指示しました。
-                このプロンプトを使用する際の注意点
-                AIの限界: AIはあくまでプログラムであり、人間のような完璧な理解力や感情を持つわけではありません。
-                文脈の理解: AIは文脈を理解する能力がまだ完全ではありません。質問の意図が明確になるよう、できるだけ具体的に質問してください。
-                倫理的な問題: AIとの会話においては、差別的な発言や有害な情報を避けるようにしましょう。
-                このプロンプトを参考に、あなたのAIとの会話を楽しんでください。
-                """,
-            ),
+            ("system", system_prompt),  # 외부 파일에서 불러온 system 프롬프트 사용
             MessagesPlaceholder(variable_name="history"),
             ("human", "{question}"),
         ]

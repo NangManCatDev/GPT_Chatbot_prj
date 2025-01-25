@@ -2,3 +2,8 @@
 __pycache__
 gemini
 test
+private.txt
+credentials.json
+token.json
+speech.wav
+Google_Calendar.py
