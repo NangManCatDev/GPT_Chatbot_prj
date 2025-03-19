@@ -1,3 +1,7 @@
+arch linux에 쓸 AI 챗봇을 구현하는 것이 목표.
+현재 다른 플젝들로 인해 우선순위가 뒤로 밀림을 알림.
+
+
 cpu
 
 docker pull voicevox/voicevox_engine:cpu-ubuntu20.04-latest
